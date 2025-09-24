@@ -75,3 +75,8 @@ test.describe.serial("Swagger user test",()=>{
 
      })
 })
+
+//npm install --save-dev allure-playwright
+
+//npx allure generate ./allure-results --clean -o ./allure-report
+//npx allure open ./allure-report
