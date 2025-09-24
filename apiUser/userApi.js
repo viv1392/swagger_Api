@@ -10,8 +10,8 @@ class apiUser{
         })
 
     }
-     async getUser(){
-        return await this.request.get(`${baseURL}/user/user1`,{
+     async getUser(username){
+        return await this.request.get(`${baseURL}/user/${username}`,{
            headers,
 
         })

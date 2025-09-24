@@ -32,11 +32,11 @@ test.describe.serial("Swagger user test",()=>{
         const data=await response.json();
         console.log('reponseDataPost :',data);
         expect(data).toHaveProperty('code',200);
-       createdUsername = userPayload[0].username; // swgger does not store data
+       createdUsername = userPayload[0].username; 
     })
 
     test("Get User Test",async({userApi})=>{
-        const response=await userApi.getUser();
+        const response=await userApi.getUser(createdUsername);
         const data= await response.json();
         console.log('reponseDataGet :', data);
         expect(data).toHaveProperty('id');
