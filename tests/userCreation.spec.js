@@ -3,11 +3,14 @@ import { apiUser } from '../apiUser/userApi';
 import { baseURL } from '../config/Config';
 import { test } from '../Fixture/fixture';
 import {expect} from '@playwright/test';
+import userResponseSchema from '../schemas/userResponseSchema';
+const { SchemaValidator } = require('../utils/schemaValidator');
 
 
 test.describe.serial("Swagger user test",()=>{
 
     let createdUsername ;
+    const validator=new SchemaValidator();
     test("create user test",async({userApi})=>{
 
     const userPayload = [
@@ -33,6 +36,8 @@ test.describe.serial("Swagger user test",()=>{
         console.log('reponseDataPost :',data);
         expect(data).toHaveProperty('code',200);
        createdUsername = userPayload[0].username; 
+       validator.validateSchema(userResponseSchema,data);
+
     })
 
     test("Get User Test",async({userApi})=>{
@@ -73,6 +78,11 @@ test.describe.serial("Swagger user test",()=>{
         expect(data).toHaveProperty("code", 200);
         expect(data).toHaveProperty("message", createdUsername);
 
+     })
+
+     test('tear down',async({userApi})=>{
+       await userApi.apiTear();
+        
      })
 })
 

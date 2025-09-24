@@ -28,5 +28,12 @@ class apiUser{
             headers
         })
      }
+
+     apiTear() {
+    if (this.request) {
+     this.request.dispose?.();; // disposes the API context
+    }
+  }
+
 }
 module.exports={apiUser};
