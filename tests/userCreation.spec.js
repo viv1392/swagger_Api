@@ -3,6 +3,7 @@ import {expect} from '@playwright/test';
 import userResponseSchema from '../schemas/userResponseSchema';
 const { SchemaValidator } = require('../utils/schemaValidator');
 const {payload,SLA}=require('../utils/testData');
+const{getUserResponseSchema}=require('../schemas/getUser');
 
 
 test.describe.serial("Swagger user test",()=>{
@@ -37,7 +38,7 @@ test.describe.serial("Swagger user test",()=>{
         expect(data).toHaveProperty('email');
         expect(response.status()).toBe(200);
         expect(response.ok()).toBeTruthy();
-       // validator.validateSchema(userResponseSchema,data);
+       // validator.validateSchema(getUserResponseSchema,data);
 
     })
 
@@ -69,6 +70,7 @@ test.describe.serial("Swagger user test",()=>{
         expect(responseTime).toBeLessThan(SLA.DELETE);
         expect(data).toHaveProperty("code", 200);
         expect(data).toHaveProperty("message", createdUsername);
+        validator.validateSchema(userResponseSchema,data);
 
      })
 
