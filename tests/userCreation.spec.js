@@ -2,7 +2,7 @@ import { test } from '../Fixture/fixture';
 import {expect} from '@playwright/test';
 import userResponseSchema from '../schemas/userResponseSchema';
 const { SchemaValidator } = require('../utils/schemaValidator');
-const {payload}=require('../utils/testData');
+const {payload,SLA}=require('../utils/testData');
 
 
 test.describe.serial("Swagger user test",()=>{
@@ -15,7 +15,7 @@ test.describe.serial("Swagger user test",()=>{
         const response= await userApi.createUser(userPayload);
         const endTime= Date.now();
         const responseTime=endTime-startTime;
-        expect(responseTime).toBeLessThan(4000);
+        expect(responseTime).toBeLessThan(SLA.POST);
         expect(response.status()).toBe(200);
         const data=await response.json();
         console.log('reponseDataPost :',data);
@@ -26,46 +26,73 @@ test.describe.serial("Swagger user test",()=>{
     })
 
     test("Get User Test",async({userApi})=>{
+        const startTime=Date.now();
         const response=await userApi.getUser(createdUsername);
         const data= await response.json();
+        const endTime=Date.now();
+        const responseTime=endTime-startTime;
+        expect(responseTime).toBeLessThan(SLA.GET);
         console.log('reponseDataGet :', data);
         expect(data).toHaveProperty('id');
         expect(data).toHaveProperty('email');
         expect(response.status()).toBe(200);
         expect(response.ok()).toBeTruthy();
+       // validator.validateSchema(userResponseSchema,data);
 
     })
 
     test('Put User test',async({userApi})=>{
         const updateduserPayload = { ...userPayload,
-                                   username:'Vivek@12',
+                                   username:`Vivek@_${Date.now()}`,
                                    phone:'3234546787'
                                 };
-                             
-
+      
+      const startTime=Date.now();
       const response=await userApi.updateUser(updateduserPayload,createdUsername);
       expect(response.status()).toBe(200);
       const data= await response.json();
+      const endTime=Date.now();
+      const responseTime=endTime-startTime;
+      expect(responseTime).toBeLessThan(SLA.PUT);
       expect(data).toHaveProperty('message');
       console.log('Updated data :',data);
+      validator.validateSchema(userResponseSchema,data);
 
     })
     test('delete user',async({userApi})=>{
+        const startTime=Date.now();
         const response=await userApi.deleteUser(createdUsername);
         expect(response.status()).toBe(200);
         const data=await response.json();
+        const endTime=Date.now();
+        const responseTime=endTime-startTime;
+        expect(responseTime).toBeLessThan(SLA.DELETE);
         expect(data).toHaveProperty("code", 200);
         expect(data).toHaveProperty("message", createdUsername);
 
      })
 
-     test('tear down',async({userApi})=>{
-       await userApi.apiTear();
-        
-     })
-})
+    test.afterAll(async ({ userApi }) => {
+    // Safe cleanup
+    try {
+      await userApi.deleteUser(createdUsername);
+    } catch (err) {
+      console.log("User already deleted, cleanup skipped.");
+    }
+    await userApi.disposeApi();
+  });
+});
 
-//npm install --save-dev allure-playwright
 
-//npx allure generate ./allure-results --clean -o ./allure-report
-//npx allure open ./allure-report
+
+
+// allure report generation
+// # Allure Playwright reporter
+//npm install -D allure-playwright
+
+//# Allure command line (for generating HTML reports)
+//npm install -g allure-commandline --save-dev
+
+//allure --version
+//allure generate allure-results --clean -o allure-report
+//allure open allure-report

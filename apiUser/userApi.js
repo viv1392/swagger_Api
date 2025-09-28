@@ -29,7 +29,7 @@ class apiUser{
         })
      }
 
-     apiTear() {
+     disposeApi() {
     if (this.request) {
      this.request.dispose?.();; // disposes the API context
     }
