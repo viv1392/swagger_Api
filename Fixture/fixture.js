@@ -7,4 +7,4 @@ const test = base.extend({
   },
 });
 
-module.exports = { test};
+module.exports = {test};

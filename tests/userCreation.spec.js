@@ -1,31 +1,16 @@
-
-import { apiUser } from '../apiUser/userApi';
-import { baseURL } from '../config/Config';
 import { test } from '../Fixture/fixture';
 import {expect} from '@playwright/test';
 import userResponseSchema from '../schemas/userResponseSchema';
 const { SchemaValidator } = require('../utils/schemaValidator');
+const {payload}=require('../utils/testData');
 
 
 test.describe.serial("Swagger user test",()=>{
-
+    const userPayload = payload();
     let createdUsername ;
     const validator=new SchemaValidator();
-    test("create user test",async({userApi})=>{
 
-    const userPayload = [
-      {
-        id: Date.now(), // unique id
-        username: "vivek123",
-        firstName: "Vivek",
-        lastName: "Pandey",
-        email: "xyz@gmail.com",
-        password: "1234567",
-        phone: "1234546780",
-        userStatus: 0
-      }
-    ];
-
+    test("create user test",async({userApi})=>{ 
         const startTime=Date.now();
         const response= await userApi.createUser(userPayload);
         const endTime= Date.now();
@@ -52,19 +37,13 @@ test.describe.serial("Swagger user test",()=>{
     })
 
     test('Put User test',async({userApi})=>{
-        const userPayload = {
-                                    id: Date.now(), // unique id
-                                    username: "vivek123",
-                                    firstName: "Vivek",
-                                    lastName: "Pandey",
-                                    email: "abc@gmail.com",
-                                    password: "1234567",
-                                    phone: "1234546780",
-                                    userStatus: 0
+        const updateduserPayload = { ...userPayload,
+                                   username:'Vivek@12',
+                                   phone:'3234546787'
                                 };
                              
 
-      const response=await userApi.updateUser(userPayload,createdUsername);
+      const response=await userApi.updateUser(updateduserPayload,createdUsername);
       expect(response.status()).toBe(200);
       const data= await response.json();
       expect(data).toHaveProperty('message');
