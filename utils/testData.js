@@ -1,16 +1,23 @@
-function payload(){
-    return [
-      {
-        id: Date.now(), // unique id
-        username: "vivek123",
-        firstName: "Vivek",
-        lastName: "Pandey",
-        email: "xyz@gmail.com",
-        password: "1234567",
-        phone: "1234546780",
-        userStatus: 0
-      }
-    ]
+function generateUser(overrides = {}){
+    const unique = Date.now();
+    return {
+      id: unique,
+      username: `vivek_${unique}`,
+      firstName: 'Vivek',
+      lastName: 'Pandey',
+      email: `vivek.${unique}@example.com`,
+      password: 'P@ssw0rd!',
+      phone: '1234546780',
+      userStatus: 0,
+      ...overrides
+    };
 }
+
+function payloadForList(user){
+    // API expects an array for createWithList
+    return [user];
+}
+
 const SLA = { POST: 4000, GET: 3000, PUT: 3000, DELETE: 3000 };
-module.exports={payload,SLA};
+
+module.exports = { generateUser, payloadForList, SLA };
